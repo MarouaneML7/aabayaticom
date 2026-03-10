@@ -139,7 +139,7 @@ const OrderForm = () => {
               onChange={handleInputChange}
               type="tel"
               dir="ltr"
-              placeholder="+212 6XX XXX XXX"
+              placeholder="06XXXXXXXX"
               className={`w-full p-4 rounded-xl border outline-none text-right bg-white shadow-sm transition-colors ${
                 phoneError 
                   ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" 
@@ -148,7 +148,7 @@ const OrderForm = () => {
             />
             {phoneError && (
               <p className="text-red-500 text-right text-xs font-bold mt-2">
-                المرجو إدخال أرقام فقط (مسموح بعلامة +)
+                المرجو إدخال أرقام فقط
               </p>
             )}
           </div>
