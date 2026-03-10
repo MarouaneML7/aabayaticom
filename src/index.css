@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Aref+Ruqaa&family=Almarai:wght@300;400;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&family=Almarai:wght@300;400;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,41 +6,27 @@
 
 @layer base {
   :root {
-    /* Alabaster - The Plaster */
     --background: 40 33% 97%;
     --foreground: 20 5% 16%;
-
-    /* Card surfaces */
     --card: 40 33% 97%;
     --card-foreground: 20 5% 16%;
-
     --popover: 40 33% 97%;
     --popover-foreground: 20 5% 16%;
-
-    /* Forest Green CTA */
     --primary: 153 40% 18%;
     --primary-foreground: 0 0% 100%;
-
-    /* Sand section */
     --secondary: 37 30% 91%;
     --secondary-foreground: 20 5% 16%;
-
     --muted: 37 20% 93%;
     --muted-foreground: 20 5% 35%;
-
     --accent: 43 100% 33%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-
     --border: 37 20% 88%;
     --input: 37 20% 88%;
     --ring: 153 40% 18%;
-
     --radius: 0.75rem;
 
-    /* Custom tokens */
     --gold: 43 100% 33%;
     --gold-foreground: 0 0% 100%;
     --sand: 37 30% 91%;
@@ -48,7 +34,8 @@
     --forest: 153 40% 18%;
     --alabaster: 40 33% 97%;
 
-    --font-display: 'Aref Ruqaa', serif;
+    /* التغيير هنا: قمنا بتغيير خط العناوين إلى Cairo */
+    --font-display: 'Cairo', sans-serif;
     --font-body: 'Almarai', sans-serif;
 
     --sidebar-background: 0 0% 98%;
@@ -66,11 +53,9 @@
   * {
     @apply border-border;
   }
-
   html {
     direction: rtl;
   }
-
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
@@ -82,16 +67,13 @@
   .font-display {
     font-family: var(--font-display);
   }
-
   .font-body {
     font-family: var(--font-body);
   }
-
   .arch-mask {
     clip-path: ellipse(50% 100% at 50% 100%);
     border-radius: 50% 50% 0 0 / 30% 30% 0 0;
   }
-
   .arch-frame {
     border-radius: 999px 999px 1rem 1rem;
     overflow: hidden;

@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['Aref Ruqaa', 'serif'],
+        display: ['Cairo', 'sans-serif'],
         body: ['Almarai', 'sans-serif'],
       },
       colors: {
