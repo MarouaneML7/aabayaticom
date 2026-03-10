@@ -75,7 +75,6 @@ const OrderForm = () => {
         <div className="text-center mb-6">
           <h2 className="font-display text-2xl text-charcoal mb-2">طلب العباية الآن</h2>
           
-          {/* رسالة الطمأنة بخصوص المقاس */}
           <div className="inline-block bg-gold/10 text-gold font-bold px-4 py-2 rounded-full text-sm mb-2">
             ✨ فصالة فراشة مريحة - تناسب جميع المقاسات (Standard Size)
           </div>
@@ -122,15 +121,15 @@ const OrderForm = () => {
             {status === "submitting" ? "جاري الإرسال..." : "تأكيد الطلب - 270 درهم"}
           </button>
           
-          {/* رسائل الثقة */}
-          <div className="flex flex-col gap-3 mt-6 bg-green-50/50 p-4 rounded-xl border border-green-100">
-            <div className="flex items-center gap-3 justify-end text-sm font-bold text-charcoal/80">
+          {/* رسائل الثقة المعدلة (RTL Alignment) */}
+          <div className="flex flex-col gap-4 mt-6 bg-green-50/50 p-5 rounded-xl border border-green-100">
+            <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
+              <span className="text-2xl drop-shadow-sm">🚚</span>
               <span>الدفع عند الاستلام، شوف السلعة عاد خلص</span>
-              <span className="text-xl">🚚</span>
             </div>
-            <div className="flex items-center gap-3 justify-end text-sm font-bold text-charcoal/80">
+            <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
+              <span className="text-2xl drop-shadow-sm">🔒</span>
               <span>معلوماتك في أمان تام ولن يتم مشاركتها</span>
-              <span className="text-xl">🔒</span>
             </div>
           </div>
         </form>
