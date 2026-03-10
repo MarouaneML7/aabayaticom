@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// The exact colors from your affiliate platform
 const availableColors = [
   { id: "green", name: "أخضر زمردي", hex: "#006A4E" },
   { id: "black", name: "أسود", hex: "#000000" },
@@ -10,19 +9,40 @@ const availableColors = [
 ];
 
 const OrderForm = () => {
-  const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
-  const [selectedColor, setSelectedColor] = useState<string>("green"); // Default color
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [selectedColor, setSelectedColor] = useState<string>("green");
+  const [formData, setFormData] = useState({ name: "", phone: "", city: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
-    
-    // Here you would normally send the data (including selectedColor) to your backend/Google Sheet
-    console.log("Order Submitted for color:", selectedColor);
 
-    setTimeout(() => {
+    // 1. Prepare data
+    const data = new FormData();
+    data.append("Date", new Date().toLocaleString());
+    data.append("Color", availableColors.find(c => c.id === selectedColor)?.name || selectedColor);
+    data.append("Name", formData.name);
+    data.append("Phone", formData.phone);
+    data.append("City", formData.city);
+
+    // 2. ⚠️ PASTE YOUR GOOGLE SCRIPT URL HERE
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XbTMaXhRsbXmyzpcnYEcqF6Agm738vW_6E1Cio8JF8jF5tr-oiG67OKb5swMhyLX/exec";
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: "POST",
+        body: data,
+        mode: "no-cors", // Required to avoid browser security blocking
+      });
       setStatus("success");
-    }, 1500);
+    } catch (error) {
+      console.error(error);
+      setStatus("error");
+    }
   };
 
   if (status === "success") {
@@ -38,16 +58,14 @@ const OrderForm = () => {
   }
 
   return (
-    <section id="order" className="py-16 px-5 bg-alabaster">
-      <div className="max-w-md mx-auto">
+    <section id="order" className="py-16 px-5 bg-alabaster relative">
+      <div className="max-w-md mx-auto relative z-10">
         <div className="text-center mb-8">
           <h2 className="font-display text-2xl text-charcoal mb-2">طلب العباية الآن</h2>
           <p className="font-body text-charcoal/70">أدخلي معلوماتك أسفله وسنتصل بك لتأكيد الطلب</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          
-          {/* --- NEW COLOR SELECTOR SECTION --- */}
           <div className="bg-white p-4 rounded-xl shadow-sm border border-charcoal/10">
             <label className="block text-right text-sm font-bold text-charcoal mb-3">
               اختاري اللون المناسب ليك: <span className="text-gold">{availableColors.find(c => c.id === selectedColor)?.name}</span>
@@ -64,20 +82,21 @@ const OrderForm = () => {
                       : "border-transparent opacity-80 hover:scale-105 hover:opacity-100"
                   }`}
                   style={{ backgroundColor: color.hex }}
-                  aria-label={`Select ${color.name}`}
                 />
               ))}
             </div>
           </div>
-          {/* ---------------------------------- */}
 
           <div>
             <label className="block text-right text-sm font-bold text-charcoal mb-1">الاسم الكامل</label>
             <input
               required
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
               type="text"
               placeholder="مثال: فاطمة الزهراء"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm"
             />
           </div>
 
@@ -85,9 +104,12 @@ const OrderForm = () => {
             <label className="block text-right text-sm font-bold text-charcoal mb-1">رقم الهاتف</label>
             <input
               required
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
               type="tel"
               placeholder="06XXXXXXXX"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm"
             />
           </div>
 
@@ -95,9 +117,12 @@ const OrderForm = () => {
             <label className="block text-right text-sm font-bold text-charcoal mb-1">المدينة</label>
             <input
               required
+              name="city"
+              value={formData.city}
+              onChange={handleInputChange}
               type="text"
               placeholder="مثال: الدار البيضاء"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm"
             />
           </div>
 
@@ -109,9 +134,9 @@ const OrderForm = () => {
             {status === "submitting" ? "جاري الإرسال..." : "تأكيد الطلب - 270 درهم"}
           </button>
           
-          <p className="text-center text-xs text-charcoal/50 mt-4">
-            🔒 معلوماتك في أمان. الدفع عند الاستلام بعد معاينة المنتج.
-          </p>
+          {status === "error" && (
+            <p className="text-red-500 text-center text-sm font-bold mt-2">وقع خطأ أثناء الإرسال. المرجو المحاولة مرة أخرى.</p>
+          )}
         </form>
       </div>
     </section>
