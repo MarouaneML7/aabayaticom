@@ -144,10 +144,10 @@ const OrderForm = () => {
   type="tel" 
   inputMode="tel" /* <--- ADD THIS LINE */
   dir="ltr" 
-  placeholder="+212 6XX XXX XXX" 
+  placeholder="06XXXXXXXX" 
   className={`w-full p-4 rounded-xl border outline-none text-right bg-alabaster shadow-sm ${phoneError ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" : "border-charcoal/10 focus:border-gold"}`} 
 />
-            {phoneError && <p className="text-red-500 text-right text-xs font-bold mt-2">المرجو إدخال أرقام فقط (مسموح بعلامة +)</p>}
+            {phoneError && <p className="text-red-500 text-right text-xs font-bold mt-2">المرجو إدخال أرقام فقط</p>}
           </div>
 
           <div>

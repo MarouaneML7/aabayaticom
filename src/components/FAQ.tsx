@@ -14,6 +14,13 @@ const faqs = [
 ];
 
 const FAQ = () => {
+  // دالة إرسال حدث Contact للبيكسل عند الضغط
+  const handleWhatsAppClick = () => {
+    if (typeof (window as any).fbq === 'function') {
+      (window as any).fbq('track', 'Contact');
+    }
+  };
+
   return (
     <section className="py-16 px-5 bg-alabaster">
       <div className="max-w-3xl mx-auto text-right">
@@ -34,9 +41,10 @@ const FAQ = () => {
             إلا مالقيتيش الجواب للسؤال ديالك، تواصلي معانا في الواتساب وغنجاوبوك فوراً 💬
           </p>
           <a
-            href="https://wa.me/212772967342" // ضع رقمك هنا
+            href="https://wa.me/212772967342" // تم الاحتفاظ برقمك
             target="_blank"
             rel="noopener noreferrer"
+            onClick={handleWhatsAppClick} // تمت إضافة تتبع الحدث هنا
             className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 px-8 rounded-full hover:bg-[#1ebe57] transition-colors shadow-lg active:scale-95"
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
