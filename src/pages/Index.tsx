@@ -4,6 +4,7 @@ import CompleteLookCard from "@/components/CompleteLookCard";
 import ColorGallery from "@/components/ColorGallery";
 import ProductSpecs from "@/components/ProductSpecs";
 import UrgencySection from "@/components/UrgencySection";
+import OrderForm from "@/components/OrderForm";
 import StickyCTA from "@/components/StickyCTA";
 
 const Index = () => {
@@ -15,6 +16,9 @@ const Index = () => {
       <ColorGallery />
       <ProductSpecs />
       <UrgencySection />
+      
+      {/* The New COD Form Section */}
+      <OrderForm />
 
       {/* Footer spacer for sticky CTA */}
       <div className="h-24" />
