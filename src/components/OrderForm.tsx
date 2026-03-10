@@ -12,17 +12,16 @@ const OrderForm = () => {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [selectedColor, setSelectedColor] = useState<string>("green");
   const [formData, setFormData] = useState({ name: "", phone: "", city: "" });
+  const [phoneError, setPhoneError] = useState(false);
   
-  // Create a unique ID for this user's session when they load the page
   const [orderId] = useState(() => Date.now().toString(36) + Math.random().toString(36).substring(2));
 
   // ⚠️ PASTE YOUR GOOGLE SCRIPT URL HERE
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XbTMaXhRsbXmyzpcnYEcqF6Agm738vW_6E1Cio8JF8jF5tr-oiG67OKb5swMhyLX/exec";
 
-  // The function that actually sends data to Google Sheets
   const sendDataToGoogle = async (isFinalSubmit: boolean = false) => {
-    // Prevent sending empty ghost rows
-    if (!formData.name && !formData.phone && !formData.city) return;
+    // Don't auto-save if the phone number has an error or if all fields are empty
+    if ((!formData.name && !formData.phone && !formData.city) || phoneError) return;
 
     const data = new FormData();
     data.append("Date", new Date().toLocaleString());
@@ -45,33 +44,33 @@ const OrderForm = () => {
     }
   };
 
-  // --- AUTO-SAVE FEATURE (Abandoned Cart Tracking) ---
   useEffect(() => {
-    // Set a timer to save data 1.5 seconds after the user stops typing
     const delayDebounceFn = setTimeout(() => {
-      // Only auto-save if they have typed at least something in one of the fields
       if (formData.name || formData.phone || formData.city) {
         sendDataToGoogle(false);
       }
     }, 1500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [formData, selectedColor]); // Runs whenever they type or change color
+  }, [formData, selectedColor]);
 
-  // Input Handlers
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+
+    // Phone Validation: Only allow numbers, spaces, and the + sign
+    if (name === "phone") {
+      if (!/^[+0-9\s]*$/.test(value) && value !== "") {
+        setPhoneError(true);
+      } else {
+        setPhoneError(false);
+      }
+    }
   };
 
-  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Strictly force numbers only. Removes any letter or symbol instantly.
-    const numericValue = e.target.value.replace(/[^0-9]/g, '');
-    setFormData({ ...formData, phone: numericValue });
-  };
-
-  // Final Submit Handler
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (phoneError) return; // Prevent submission if there's an error
     setStatus("submitting");
     sendDataToGoogle(true);
   };
@@ -137,12 +136,21 @@ const OrderForm = () => {
               required
               name="phone"
               value={formData.phone}
-              onChange={handlePhoneChange}
+              onChange={handleInputChange}
               type="tel"
               dir="ltr"
-              placeholder="06XXXXXXXX"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
+              placeholder="+212 6XX XXX XXX"
+              className={`w-full p-4 rounded-xl border outline-none text-right bg-white shadow-sm transition-colors ${
+                phoneError 
+                  ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" 
+                  : "border-charcoal/10 focus:border-gold"
+              }`}
             />
+            {phoneError && (
+              <p className="text-red-500 text-right text-xs font-bold mt-2">
+                المرجو إدخال أرقام فقط (مسموح بعلامة +)
+              </p>
+            )}
           </div>
 
           <div>
@@ -160,7 +168,7 @@ const OrderForm = () => {
 
           <button
             type="submit"
-            disabled={status === "submitting"}
+            disabled={status === "submitting" || phoneError}
             className="w-full bg-charcoal text-white font-bold py-5 rounded-xl shadow-lg hover:bg-black transition-colors active:scale-95 disabled:opacity-50 mt-2"
           >
             {status === "submitting" ? "جاري الإرسال..." : "تأكيد الطلب - 270 درهم"}
