@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const availableColors = [
   { id: "green", name: "أخضر زمردي", hex: "#006A4E" },
@@ -12,46 +12,77 @@ const OrderForm = () => {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [selectedColor, setSelectedColor] = useState<string>("green");
   const [formData, setFormData] = useState({ name: "", phone: "", city: "" });
+  
+  // Create a unique ID for this user's session when they load the page
+  const [orderId] = useState(() => Date.now().toString(36) + Math.random().toString(36).substring(2));
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  // ⚠️ PASTE YOUR GOOGLE SCRIPT URL HERE
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XbTMaXhRsbXmyzpcnYEcqF6Agm738vW_6E1Cio8JF8jF5tr-oiG67OKb5swMhyLX/exec";
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("submitting");
+  // The function that actually sends data to Google Sheets
+  const sendDataToGoogle = async (isFinalSubmit: boolean = false) => {
+    // Prevent sending empty ghost rows
+    if (!formData.name && !formData.phone && !formData.city) return;
 
-    // 1. Prepare data
     const data = new FormData();
     data.append("Date", new Date().toLocaleString());
     data.append("Color", availableColors.find(c => c.id === selectedColor)?.name || selectedColor);
     data.append("Name", formData.name);
     data.append("Phone", formData.phone);
     data.append("City", formData.city);
-
-    // 2. ⚠️ PASTE YOUR GOOGLE SCRIPT URL HERE
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XbTMaXhRsbXmyzpcnYEcqF6Agm738vW_6E1Cio8JF8jF5tr-oiG67OKb5swMhyLX/exec";
+    data.append("OrderId", orderId);
 
     try {
       await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
         body: data,
-        mode: "no-cors", // Required to avoid browser security blocking
+        mode: "no-cors",
       });
-      setStatus("success");
+      if (isFinalSubmit) setStatus("success");
     } catch (error) {
-      console.error(error);
-      setStatus("error");
+      console.error("Tracking Error:", error);
+      if (isFinalSubmit) setStatus("error");
     }
+  };
+
+  // --- AUTO-SAVE FEATURE (Abandoned Cart Tracking) ---
+  useEffect(() => {
+    // Set a timer to save data 1.5 seconds after the user stops typing
+    const delayDebounceFn = setTimeout(() => {
+      // Only auto-save if they have typed at least something in one of the fields
+      if (formData.name || formData.phone || formData.city) {
+        sendDataToGoogle(false);
+      }
+    }, 1500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [formData, selectedColor]); // Runs whenever they type or change color
+
+  // Input Handlers
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Strictly force numbers only. Removes any letter or symbol instantly.
+    const numericValue = e.target.value.replace(/[^0-9]/g, '');
+    setFormData({ ...formData, phone: numericValue });
+  };
+
+  // Final Submit Handler
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus("submitting");
+    sendDataToGoogle(true);
   };
 
   if (status === "success") {
     return (
       <section id="order" className="py-12 px-5 text-center bg-white">
-        <div className="max-w-md mx-auto p-8 rounded-2xl border-2 border-green-500 bg-green-50">
+        <div className="max-w-md mx-auto p-8 rounded-2xl border-2 border-green-500 bg-green-50 shadow-sm">
           <div className="text-5xl mb-4">✅</div>
           <h2 className="text-2xl font-bold text-green-800 mb-2">تم تسجيل طلبك بنجاح!</h2>
-          <p className="text-green-700">شكراً لثقتك. سنتصل بك قريباً عبر الهاتف لتأكيد العنوان وإرسال العباية.</p>
+          <p className="text-green-700 font-medium">شكراً لثقتك. سنتصل بك قريباً عبر الهاتف لتأكيد العنوان وإرسال العباية.</p>
         </div>
       </section>
     );
@@ -96,7 +127,7 @@ const OrderForm = () => {
               onChange={handleInputChange}
               type="text"
               placeholder="مثال: فاطمة الزهراء"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm"
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
             />
           </div>
 
@@ -106,10 +137,11 @@ const OrderForm = () => {
               required
               name="phone"
               value={formData.phone}
-              onChange={handleInputChange}
+              onChange={handlePhoneChange}
               type="tel"
+              dir="ltr"
               placeholder="06XXXXXXXX"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm"
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
             />
           </div>
 
@@ -122,7 +154,7 @@ const OrderForm = () => {
               onChange={handleInputChange}
               type="text"
               placeholder="مثال: الدار البيضاء"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm"
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
             />
           </div>
 
