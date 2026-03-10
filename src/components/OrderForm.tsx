@@ -14,8 +14,21 @@ const OrderForm = () => {
   const [formData, setFormData] = useState({ name: "", phone: "", city: "" });
   const [phoneError, setPhoneError] = useState(false);
   
+  // لضمان إرسال حدث InitiateCheckout مرة واحدة فقط
+  const [hasInitiatedCheckout, setHasInitiatedCheckout] = useState(false);
+  
   const [orderId] = useState(() => Date.now().toString(36) + Math.random().toString(36).substring(2));
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XbTMaXhRsbXmyzpcnYEcqF6Agm738vW_6E1Cio8JF8jF5tr-oiG67OKb5swMhyLX/exec";
+
+  // دالة تتبع بدء تعبئة الاستمارة
+  const handleFormInteraction = () => {
+    if (!hasInitiatedCheckout) {
+      setHasInitiatedCheckout(true);
+      if (typeof (window as any).fbq === 'function') {
+        (window as any).fbq('track', 'InitiateCheckout', { value: 270, currency: 'MAD' });
+      }
+    }
+  };
 
   const sendDataToGoogle = async (isFinalSubmit: boolean = false) => {
     if ((!formData.name && !formData.phone && !formData.city) || phoneError) return;
@@ -29,7 +42,13 @@ const OrderForm = () => {
 
     try {
       await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: data, mode: "no-cors" });
-      if (isFinalSubmit) setStatus("success");
+      if (isFinalSubmit) {
+        setStatus("success");
+        // إرسال حدث Lead بعد نجاح الطلب
+        if (typeof (window as any).fbq === 'function') {
+          (window as any).fbq('track', 'Lead', { value: 270, currency: 'MAD' });
+        }
+      }
     } catch (error) {
       if (isFinalSubmit) setStatus("error");
     }
@@ -74,7 +93,6 @@ const OrderForm = () => {
       <div className="max-w-md mx-auto relative z-10">
         <div className="text-center mb-6">
           <h2 className="font-display text-2xl text-charcoal mb-2">طلب العباية الآن</h2>
-          
           <div className="inline-block bg-gold/10 text-gold font-bold px-4 py-2 rounded-full text-sm mb-2">
             ✨ فصالة فراشة مريحة - تناسب جميع المقاسات (Standard Size)
           </div>
@@ -103,25 +121,52 @@ const OrderForm = () => {
 
           <div>
             <label className="block text-right text-sm font-bold text-charcoal mb-1">الاسم الكامل</label>
-            <input required name="name" value={formData.name} onChange={handleInputChange} type="text" placeholder="مثال: فاطمة الزهراء" className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-alabaster shadow-sm" />
+            <input 
+              required 
+              name="name" 
+              value={formData.name} 
+              onChange={handleInputChange} 
+              onFocus={handleFormInteraction} // تشغيل حدث InitiateCheckout
+              type="text" 
+              placeholder="مثال: فاطمة الزهراء" 
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-alabaster shadow-sm" 
+            />
           </div>
 
           <div>
             <label className="block text-right text-sm font-bold text-charcoal mb-1">رقم الهاتف</label>
-            <input required name="phone" value={formData.phone} onChange={handleInputChange} type="tel" dir="ltr" placeholder="+212 6XX XXX XXX" className={`w-full p-4 rounded-xl border outline-none text-right bg-alabaster shadow-sm ${phoneError ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" : "border-charcoal/10 focus:border-gold"}`} />
+            <input 
+              required 
+              name="phone" 
+              value={formData.phone} 
+              onChange={handleInputChange} 
+              onFocus={handleFormInteraction} // تشغيل حدث InitiateCheckout
+              type="tel" 
+              dir="ltr" 
+              placeholder="+212 6XX XXX XXX" 
+              className={`w-full p-4 rounded-xl border outline-none text-right bg-alabaster shadow-sm ${phoneError ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" : "border-charcoal/10 focus:border-gold"}`} 
+            />
             {phoneError && <p className="text-red-500 text-right text-xs font-bold mt-2">المرجو إدخال أرقام فقط (مسموح بعلامة +)</p>}
           </div>
 
           <div>
             <label className="block text-right text-sm font-bold text-charcoal mb-1">المدينة</label>
-            <input required name="city" value={formData.city} onChange={handleInputChange} type="text" placeholder="مثال: الدار البيضاء" className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-alabaster shadow-sm" />
+            <input 
+              required 
+              name="city" 
+              value={formData.city} 
+              onChange={handleInputChange} 
+              onFocus={handleFormInteraction} // تشغيل حدث InitiateCheckout
+              type="text" 
+              placeholder="مثال: الدار البيضاء" 
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-alabaster shadow-sm" 
+            />
           </div>
 
           <button type="submit" disabled={status === "submitting" || phoneError} className="w-full bg-charcoal text-white font-bold py-5 rounded-xl shadow-lg hover:bg-black transition-colors active:scale-95 mt-2">
             {status === "submitting" ? "جاري الإرسال..." : "تأكيد الطلب - 270 درهم"}
           </button>
           
-          {/* رسائل الثقة المعدلة (RTL Alignment) */}
           <div className="flex flex-col gap-4 mt-6 bg-green-50/50 p-5 rounded-xl border border-green-100">
             <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
               <span className="text-2xl drop-shadow-sm">🚚</span>
