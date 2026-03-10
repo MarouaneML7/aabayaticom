@@ -1,57 +1,47 @@
-import { useState } from "react";
+import emeraldImg from "@/assets/abaya-emerald.jpg";
+import burgundyImg from "@/assets/abaya-burgundy.jpg";
+import blackImg from "@/assets/abaya-black.jpg";
+import navyImg from "@/assets/abaya-navy.jpg";
+import fuchsiaImg from "@/assets/abaya-fuchsia.jpg";
 
-import abayaBlack from "@/assets/abaya-black.jpg";
-import abayaBurgundy from "@/assets/abaya-burgundy.jpg";
-import abayaEmerald from "@/assets/abaya-emerald.jpg";
-import abayaFuchsia from "@/assets/abaya-fuchsia.jpg";
-import abayaNavy from "@/assets/abaya-navy.jpg";
-
-const colors = [
-  { name: "أخضر زمردي", image: abayaEmerald, swatch: "#0D6B4F" },
-  { name: "أحمر ملكي", image: abayaBurgundy, swatch: "#8B1A3A" },
-  { name: "أسود كلاسيكي", image: abayaBlack, swatch: "#1A1A1A" },
-  { name: "وردي فوشيا", image: abayaFuchsia, swatch: "#B76E8B" },
-  { name: "أزرق غامق", image: abayaNavy, swatch: "#1B2A4A" },
+const galleryColors = [
+  { id: "emerald", name: "أخضر زمردي", img: emeraldImg },
+  { id: "burgundy", name: "أحمر ملكي", img: burgundyImg },
+  { id: "black", name: "أسود أنيق", img: blackImg },
+  { id: "navy", name: "أزرق غامق", img: navyImg },
+  { id: "fuchsia", name: "وردي حيوي", img: fuchsiaImg },
 ];
 
 const ColorGallery = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-
   return (
-    <section className="py-12 px-5">
-      <h2 className="font-display text-2xl text-center text-foreground mb-8">
-        اختاري اللون ديالك
-      </h2>
-
-      {/* Main image in arch frame */}
-      <div className="max-w-sm mx-auto mb-6">
-        <div className="arch-frame aspect-[3/4] bg-sand">
-          <img
-            src={colors[activeIndex].image}
-            alt={colors[activeIndex].name}
-            className="w-full h-full object-cover transition-opacity duration-300"
-          />
+    <section className="py-16 px-5 bg-white">
+      <div className="max-w-5xl mx-auto">
+        
+        {/* New "Showcase" Headline */}
+        <div className="text-center mb-10">
+          <h2 className="font-display text-3xl text-charcoal mb-3">اكتشفي الألوان المتوفرة</h2>
+          <p className="font-body text-charcoal/70 max-w-md mx-auto">
+            خمسة ألوان ساحرة اخترناها بعناية لتناسب ذوقك الرفيع. تصفحي الصور واختاري لونك المفضل في استمارة الطلب أسفله.
+          </p>
         </div>
-        <p className="text-center font-body font-bold text-foreground mt-4 text-lg">
-          {colors[activeIndex].name}
-        </p>
-      </div>
 
-      {/* Color swatches */}
-      <div className="flex justify-center gap-3 mt-6">
-        {colors.map((color, index) => (
-          <button
-            key={color.name}
-            onClick={() => setActiveIndex(index)}
-            className={`w-10 h-10 rounded-full border-2 transition-all duration-200 ${
-              activeIndex === index
-                ? "border-gold scale-110 shadow-lg"
-                : "border-border hover:border-gold/50"
-            }`}
-            style={{ backgroundColor: color.swatch }}
-            aria-label={color.name}
-          />
-        ))}
+        {/* Beautiful Image Grid (No buttons or selection logic) */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {galleryColors.map((color) => (
+            <div key={color.id} className="group flex flex-col items-center">
+              <div className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden mb-3 shadow-sm border border-charcoal/5">
+                <img
+                  src={color.img}
+                  alt={`عباية بيتش - ${color.name}`}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+              <h3 className="font-body font-bold text-charcoal text-lg">{color.name}</h3>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );
