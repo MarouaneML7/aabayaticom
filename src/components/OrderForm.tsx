@@ -136,16 +136,17 @@ const OrderForm = () => {
           <div>
             <label className="block text-right text-sm font-bold text-charcoal mb-1">رقم الهاتف</label>
             <input 
-              required 
-              name="phone" 
-              value={formData.phone} 
-              onChange={handleInputChange} 
-              onFocus={handleFormInteraction} // تشغيل حدث InitiateCheckout
-              type="tel" 
-              dir="ltr" 
-              placeholder="+212 6XX XXX XXX" 
-              className={`w-full p-4 rounded-xl border outline-none text-right bg-alabaster shadow-sm ${phoneError ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" : "border-charcoal/10 focus:border-gold"}`} 
-            />
+  required 
+  name="phone" 
+  value={formData.phone} 
+  onChange={handleInputChange} 
+  onFocus={handleFormInteraction} 
+  type="tel" 
+  inputMode="tel" /* <--- ADD THIS LINE */
+  dir="ltr" 
+  placeholder="+212 6XX XXX XXX" 
+  className={`w-full p-4 rounded-xl border outline-none text-right bg-alabaster shadow-sm ${phoneError ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" : "border-charcoal/10 focus:border-gold"}`} 
+/>
             {phoneError && <p className="text-red-500 text-right text-xs font-bold mt-2">المرجو إدخال أرقام فقط (مسموح بعلامة +)</p>}
           </div>
 
