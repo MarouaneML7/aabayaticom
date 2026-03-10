@@ -1,13 +1,25 @@
 import { useState } from "react";
 
+// The exact colors from your affiliate platform
+const availableColors = [
+  { id: "green", name: "أخضر زمردي", hex: "#006A4E" },
+  { id: "black", name: "أسود", hex: "#000000" },
+  { id: "burgundy", name: "أحمر ملكي", hex: "#800020" },
+  { id: "navy", name: "أزرق غامق", hex: "#000080" },
+  { id: "fuchsia", name: "وردي", hex: "#FF00FF" },
+];
+
 const OrderForm = () => {
   const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
+  const [selectedColor, setSelectedColor] = useState<string>("green"); // Default color
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
     
-    // Simulate a submission - You can later connect this to a Google Sheet or your Affiliate API
+    // Here you would normally send the data (including selectedColor) to your backend/Google Sheet
+    console.log("Order Submitted for color:", selectedColor);
+
     setTimeout(() => {
       setStatus("success");
     }, 1500);
@@ -33,14 +45,39 @@ const OrderForm = () => {
           <p className="font-body text-charcoal/70">أدخلي معلوماتك أسفله وسنتصل بك لتأكيد الطلب</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          
+          {/* --- NEW COLOR SELECTOR SECTION --- */}
+          <div className="bg-white p-4 rounded-xl shadow-sm border border-charcoal/10">
+            <label className="block text-right text-sm font-bold text-charcoal mb-3">
+              اختاري اللون المناسب ليك: <span className="text-gold">{availableColors.find(c => c.id === selectedColor)?.name}</span>
+            </label>
+            <div className="flex justify-center gap-4 flex-row-reverse">
+              {availableColors.map((color) => (
+                <button
+                  key={color.id}
+                  type="button"
+                  onClick={() => setSelectedColor(color.id)}
+                  className={`w-10 h-10 rounded-full transition-all duration-200 border-2 ${
+                    selectedColor === color.id 
+                      ? "scale-110 border-gold shadow-md ring-2 ring-gold/20" 
+                      : "border-transparent opacity-80 hover:scale-105 hover:opacity-100"
+                  }`}
+                  style={{ backgroundColor: color.hex }}
+                  aria-label={`Select ${color.name}`}
+                />
+              ))}
+            </div>
+          </div>
+          {/* ---------------------------------- */}
+
           <div>
             <label className="block text-right text-sm font-bold text-charcoal mb-1">الاسم الكامل</label>
             <input
               required
               type="text"
               placeholder="مثال: فاطمة الزهراء"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm"
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
             />
           </div>
 
@@ -50,7 +87,7 @@ const OrderForm = () => {
               required
               type="tel"
               placeholder="06XXXXXXXX"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm"
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
             />
           </div>
 
@@ -60,14 +97,14 @@ const OrderForm = () => {
               required
               type="text"
               placeholder="مثال: الدار البيضاء"
-              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm"
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-white shadow-sm transition-colors"
             />
           </div>
 
           <button
             type="submit"
             disabled={status === "submitting"}
-            className="w-full bg-charcoal text-white font-bold py-5 rounded-xl shadow-lg hover:bg-black transition-colors active:scale-95 disabled:opacity-50"
+            className="w-full bg-charcoal text-white font-bold py-5 rounded-xl shadow-lg hover:bg-black transition-colors active:scale-95 disabled:opacity-50 mt-2"
           >
             {status === "submitting" ? "جاري الإرسال..." : "تأكيد الطلب - 270 درهم"}
           </button>
