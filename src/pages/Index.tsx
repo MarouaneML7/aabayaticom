@@ -3,9 +3,12 @@ import HeroSection from "@/components/HeroSection";
 import CompleteLookCard from "@/components/CompleteLookCard";
 import ColorGallery from "@/components/ColorGallery";
 import ProductSpecs from "@/components/ProductSpecs";
+import Testimonials from "@/components/Testimonials"; // القسم الجديد
 import UrgencySection from "@/components/UrgencySection";
 import OrderForm from "@/components/OrderForm";
+import FAQ from "@/components/FAQ"; // القسم الجديد
 import StickyCTA from "@/components/StickyCTA";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp"; // الزر العائم
 
 const Index = () => {
   return (
@@ -15,15 +18,24 @@ const Index = () => {
       <CompleteLookCard />
       <ColorGallery />
       <ProductSpecs />
+      
+      {/* التقييمات قبل الشراء */}
+      <Testimonials />
+      
       <UrgencySection />
       
-      {/* The New COD Form Section */}
+      {/* استمارة الطلب */}
       <OrderForm />
+      
+      {/* الأسئلة الشائعة بعد الاستمارة */}
+      <FAQ />
 
-      {/* Footer spacer for sticky CTA */}
-      <div className="h-24" />
+      {/* مساحة فارغة في الأسفل كي لا يغطي الزر على المحتوى */}
+      <div className="h-28 bg-alabaster" />
 
+      {/* الأزرار الثابتة */}
       <StickyCTA />
+      <FloatingWhatsApp />
     </div>
   );
 };
