@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import HeroSection from "@/components/HeroSection";
+import ProductDetailsGallery from "@/components/ProductDetailsGallery"; // 👈 استيراد القسم الجديد
 import CompleteLookCard from "@/components/CompleteLookCard";
 import ColorGallery from "@/components/ColorGallery";
 import ProductSpecs from "@/components/ProductSpecs";
@@ -12,7 +13,6 @@ import StickyCTA from "@/components/StickyCTA";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 
 const Index = () => {
-  // إرسال حدث ViewContent عند تحميل الصفحة
   useEffect(() => {
     if (typeof (window as any).fbq === 'function') {
       (window as any).fbq('track', 'ViewContent');
@@ -23,6 +23,10 @@ const Index = () => {
     <div className="min-h-screen bg-background font-body" dir="rtl">
       <AnnouncementBar />
       <HeroSection />
+      
+      {/* 👈 معرض التفاصيل عن قرب وضعناه هنا */}
+      <ProductDetailsGallery /> 
+      
       <CompleteLookCard />
       <ColorGallery />
       <ProductSpecs />
