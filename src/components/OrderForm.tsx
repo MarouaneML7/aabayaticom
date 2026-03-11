@@ -21,8 +21,17 @@ const OrderForm = () => {
   const handleFormInteraction = () => {
     if (!hasInitiatedCheckout) {
       setHasInitiatedCheckout(true);
+      // Facebook Pixel
       if (typeof (window as any).fbq === 'function') {
         (window as any).fbq('track', 'InitiateCheckout', { value: 270, currency: 'MAD' });
+      }
+      // Google Analytics
+      if (typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'begin_checkout', {
+          value: 270,
+          currency: 'MAD',
+          items: [{ item_name: "عباية بيتش بالشال", price: 270 }]
+        });
       }
     }
   };
@@ -41,8 +50,18 @@ const OrderForm = () => {
       await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: data, mode: "no-cors" });
       if (isFinalSubmit) {
         setStatus("success");
+        // Facebook Pixel
         if (typeof (window as any).fbq === 'function') {
           (window as any).fbq('track', 'Lead', { value: 270, currency: 'MAD' });
+        }
+        // Google Analytics (Tracking as a Purchase/Lead)
+        if (typeof (window as any).gtag === 'function') {
+          (window as any).gtag('event', 'purchase', {
+            transaction_id: orderId, // رقم الطلب الفريد
+            value: 270,
+            currency: 'MAD',
+            items: [{ item_name: "عباية بيتش بالشال", item_variant: selectedColor, price: 270 }]
+          });
         }
       }
     } catch (error) {
