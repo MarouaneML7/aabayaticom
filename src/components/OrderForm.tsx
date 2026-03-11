@@ -14,13 +14,10 @@ const OrderForm = () => {
   const [formData, setFormData] = useState({ name: "", phone: "", city: "" });
   const [phoneError, setPhoneError] = useState(false);
   
-  // لضمان إرسال حدث InitiateCheckout مرة واحدة فقط
   const [hasInitiatedCheckout, setHasInitiatedCheckout] = useState(false);
-  
   const [orderId] = useState(() => Date.now().toString(36) + Math.random().toString(36).substring(2));
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XbTMaXhRsbXmyzpcnYEcqF6Agm738vW_6E1Cio8JF8jF5tr-oiG67OKb5swMhyLX/exec";
 
-  // دالة تتبع بدء تعبئة الاستمارة
   const handleFormInteraction = () => {
     if (!hasInitiatedCheckout) {
       setHasInitiatedCheckout(true);
@@ -44,7 +41,6 @@ const OrderForm = () => {
       await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: data, mode: "no-cors" });
       if (isFinalSubmit) {
         setStatus("success");
-        // إرسال حدث Lead بعد نجاح الطلب
         if (typeof (window as any).fbq === 'function') {
           (window as any).fbq('track', 'Lead', { value: 270, currency: 'MAD' });
         }
@@ -126,7 +122,7 @@ const OrderForm = () => {
               name="name" 
               value={formData.name} 
               onChange={handleInputChange} 
-              onFocus={handleFormInteraction} // تشغيل حدث InitiateCheckout
+              onFocus={handleFormInteraction}
               type="text" 
               placeholder="مثال: فاطمة الزهراء" 
               className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-alabaster shadow-sm" 
@@ -136,17 +132,17 @@ const OrderForm = () => {
           <div>
             <label className="block text-right text-sm font-bold text-charcoal mb-1">رقم الهاتف</label>
             <input 
-  required 
-  name="phone" 
-  value={formData.phone} 
-  onChange={handleInputChange} 
-  onFocus={handleFormInteraction} 
-  type="tel" 
-  inputMode="tel" /* <--- ADD THIS LINE */
-  dir="ltr" 
-  placeholder="06XXXXXXXX" 
-  className={`w-full p-4 rounded-xl border outline-none text-right bg-alabaster shadow-sm ${phoneError ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" : "border-charcoal/10 focus:border-gold"}`} 
-/>
+              required 
+              name="phone" 
+              value={formData.phone} 
+              onChange={handleInputChange} 
+              onFocus={handleFormInteraction}
+              type="tel" 
+              inputMode="tel"
+              dir="ltr" 
+              placeholder="06XXXXXXXX" 
+              className={`w-full p-4 rounded-xl border outline-none text-right bg-alabaster shadow-sm ${phoneError ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" : "border-charcoal/10 focus:border-gold"}`} 
+            />
             {phoneError && <p className="text-red-500 text-right text-xs font-bold mt-2">المرجو إدخال أرقام فقط</p>}
           </div>
 
@@ -157,7 +153,7 @@ const OrderForm = () => {
               name="city" 
               value={formData.city} 
               onChange={handleInputChange} 
-              onFocus={handleFormInteraction} // تشغيل حدث InitiateCheckout
+              onFocus={handleFormInteraction}
               type="text" 
               placeholder="مثال: الدار البيضاء" 
               className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-alabaster shadow-sm" 
@@ -169,6 +165,11 @@ const OrderForm = () => {
           </button>
           
           <div className="flex flex-col gap-4 mt-6 bg-green-50/50 p-5 rounded-xl border border-green-100">
+            {/* تمت إضافة علامة التوصيل المجاني هنا */}
+            <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
+              <span className="text-2xl drop-shadow-sm">🇲🇦</span>
+              <span>توصيل مجاني (فابور) لجميع المدن المغربية</span>
+            </div>
             <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
               <span className="text-2xl drop-shadow-sm">🚚</span>
               <span>الدفع عند الاستلام، شوف السلعة عاد خلص</span>

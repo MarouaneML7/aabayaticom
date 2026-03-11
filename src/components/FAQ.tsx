@@ -4,8 +4,8 @@ const faqs = [
     a: "نعم! العرض كيشمل العباية بالإضافة للشال ديالها بنفس الثوب واللون مجاناً."
   },
   {
-    q: "شحال كياخد التوصيل باش توصلني السلعة؟",
-    a: "التوصيل كياخد بين 24 و 48 ساعة لجميع المدن المغربية."
+    q: "شحال ثمن التوصيل وشحال كياخد ديال الوقت؟",
+    a: "التوصيل فابور (مجاني) لجميع المدن المغربية! 🇲🇦 وكياخد بين 24 و 48 ساعة باش توصلك السلعة حتال باب الدار."
   },
   {
     q: "واش نقدر نشوف السلعة ونقلبها قبل ما نخلص؟",
@@ -14,7 +14,6 @@ const faqs = [
 ];
 
 const FAQ = () => {
-  // دالة إرسال حدث Contact للبيكسل عند الضغط
   const handleWhatsAppClick = () => {
     if (typeof (window as any).fbq === 'function') {
       (window as any).fbq('track', 'Contact');
@@ -35,16 +34,15 @@ const FAQ = () => {
           ))}
         </div>
 
-        {/* قسم التواصل عبر الواتساب */}
         <div className="bg-white p-6 rounded-2xl border-2 border-green-500 text-center shadow-md">
           <p className="font-bold text-lg text-charcoal mb-4">
             إلا مالقيتيش الجواب للسؤال ديالك، تواصلي معانا في الواتساب وغنجاوبوك فوراً 💬
           </p>
           <a
-            href="https://wa.me/212772967342" // تم الاحتفاظ برقمك
+            href="https://wa.me/212772967342"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={handleWhatsAppClick} // تمت إضافة تتبع الحدث هنا
+            onClick={handleWhatsAppClick}
             className="inline-flex items-center justify-center gap-2 bg-[#25D366] text-white font-bold py-3 px-8 rounded-full hover:bg-[#1ebe57] transition-colors shadow-lg active:scale-95"
           >
             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
