@@ -1,13 +1,14 @@
-import logo from "@/assets/logo.png"; // تأكد من اسم الصورة
+import logo from "@/assets/logo.png";
 
 const Header = () => {
   return (
-    <header className="w-full bg-white py-4 shadow-sm relative z-20">
+    <header className="sticky top-0 z-40 w-full bg-white/60 backdrop-blur-lg border-b border-white/20 py-2 shadow-sm transition-all duration-300">
       <div className="max-w-5xl mx-auto px-5 flex justify-center items-center">
         <img 
           src={logo} 
           alt="AabayatiCom Logo" 
-          className="h-10 md:h-12 object-contain" // حجم صغير وأنيق
+          // تم تصغير حجم اللوجو ليكون أنيقاً ولا يأخذ مساحة طولية كبيرة
+          className="h-7 md:h-9 object-contain drop-shadow-sm" 
         />
       </div>
     </header>
