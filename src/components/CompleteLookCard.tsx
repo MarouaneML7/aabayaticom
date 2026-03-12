@@ -13,7 +13,7 @@ const CompleteLookCard = () => {
         </h2>
 
         <p className="font-body text-base font-light text-muted-foreground leading-relaxed mb-6">
-          هاد العرض فيه العباية + الشال ديالها بنفس الثوب واللون.. باش تكوني واجدة للعيد في دقائق!
+          هاد العرض فيه العباية + الشال ديالها لي كيواتي لون الخطوط لي فالعباية.. باش تكوني واجدة للعيد بأناقة وتناسق!
         </p>
 
         <div className="flex items-center justify-center gap-4 text-sm text-gold font-bold font-body">

@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import AnnouncementBar from "@/components/AnnouncementBar";
+import Header from "@/components/Header"; // 👈 استيراد الهيدر هنا
 import HeroSection from "@/components/HeroSection";
-import ProductVideo from "@/components/ProductVideo"; // 👈 استيراد قسم الفيديو الجديد
+import ProductVideo from "@/components/ProductVideo"; 
 import CompleteLookCard from "@/components/CompleteLookCard";
 import ColorGallery from "@/components/ColorGallery";
 import ProductSpecs from "@/components/ProductSpecs";
@@ -22,11 +23,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background font-body" dir="rtl">
       <AnnouncementBar />
+      <Header /> {/* 👈 إضافة اللوجو هنا */}
       <HeroSection />
-      
-      {/* 👈 قسم الفيديو يظهر هنا مباشرة بعد الغلاف */}
       <ProductVideo /> 
-      
       <CompleteLookCard />
       <ColorGallery />
       <ProductSpecs />
