@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import AnnouncementBar from "@/components/AnnouncementBar";
 import HeroSection from "@/components/HeroSection";
-import ProductDetailsGallery from "@/components/ProductDetailsGallery"; // 👈 استيراد القسم الجديد
+import ProductVideo from "@/components/ProductVideo"; // 👈 استيراد قسم الفيديو الجديد
 import CompleteLookCard from "@/components/CompleteLookCard";
 import ColorGallery from "@/components/ColorGallery";
 import ProductSpecs from "@/components/ProductSpecs";
@@ -24,8 +24,8 @@ const Index = () => {
       <AnnouncementBar />
       <HeroSection />
       
-      {/* 👈 معرض التفاصيل عن قرب وضعناه هنا */}
-      <ProductDetailsGallery /> 
+      {/* 👈 قسم الفيديو يظهر هنا مباشرة بعد الغلاف */}
+      <ProductVideo /> 
       
       <CompleteLookCard />
       <ColorGallery />
