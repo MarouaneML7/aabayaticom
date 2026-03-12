@@ -12,29 +12,35 @@
     --card-foreground: 20 5% 16%;
     --popover: 40 33% 97%;
     --popover-foreground: 20 5% 16%;
-    --primary: 153 40% 18%;
+    
+    /* 👈 تم تحديث اللون الأساسي ليطابق الأخضر الخاص باللوجو (#07553d) */
+    --primary: 162 85% 18%; 
     --primary-foreground: 0 0% 100%;
+    
     --secondary: 37 30% 91%;
     --secondary-foreground: 20 5% 16%;
     --muted: 37 20% 93%;
     --muted-foreground: 20 5% 35%;
-    --accent: 43 100% 33%;
+    
+    /* 👈 تم تحديث اللون الثانوي (الذهبي) ليطابق اللوجو (#c6a45d) */
+    --accent: 41 48% 57%; 
     --accent-foreground: 0 0% 100%;
+    
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     --border: 37 20% 88%;
     --input: 37 20% 88%;
-    --ring: 153 40% 18%;
+    --ring: 162 85% 18%;
     --radius: 0.75rem;
 
-    --gold: 43 100% 33%;
+    /* 👈 تم التحديث هنا أيضاً للألوان المخصصة */
+    --gold: 41 48% 57%;
     --gold-foreground: 0 0% 100%;
     --sand: 37 30% 91%;
     --charcoal: 20 5% 16%;
-    --forest: 153 40% 18%;
+    --forest: 162 85% 18%;
     --alabaster: 40 33% 97%;
 
-    /* التغيير هنا: قمنا بتغيير خط العناوين إلى Cairo */
     --font-display: 'Cairo', sans-serif;
     --font-body: 'Almarai', sans-serif;
 
