@@ -1,163 +1,209 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+const availableColors = [
+  { id: "green", name: "أخضر زمردي", hex: "#006A4E" },
+  { id: "black", name: "أسود", hex: "#000000" },
+  { id: "burgundy", name: "أحمر ملكي", hex: "#800020" },
+  { id: "navy", name: "أزرق غامق", hex: "#000080" },
+  { id: "fuchsia", name: "وردي", hex: "#FF00FF" },
+];
 
 const OrderForm = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [selectedColor, setSelectedColor] = useState<string>("green");
+  const [formData, setFormData] = useState({ name: "", phone: "", city: "" });
+  const [phoneError, setPhoneError] = useState(false);
   
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    city: "",
-    address: "",
-  });
+  const [hasInitiatedCheckout, setHasInitiatedCheckout] = useState(false);
+  const [orderId] = useState(() => Date.now().toString(36) + Math.random().toString(36).substring(2));
+  
+  // رابط Google Apps Script الخاص بك
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XbTMaXhRsbXmyzpcnYEcqF6Agm738vW_6E1Cio8JF8jF5tr-oiG67OKb5swMhyLX/exec";
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    // 🔴 إعدادات الـ API الخاصة بشبكة Chouraka / Starshops
-    const API_KEY = "JAW_d9E89XlSRO0PYFLV1XkPWeRLt7YX0t0T";
-    
-    // ⚠️ تنبيه: هذا هو الرابط الافتراضي للشبكات في المغرب، إذا كان في إعدادات المنصة رابط آخر (Endpoint URL) قم بتبديله هنا.
-    const API_URL = "https://api.chouraka.com/v1/affiliate/leads"; 
-
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${API_KEY}`,
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          phone: formData.phone,
-          city: formData.city,
-          address: formData.address,
-          
-          // ⚠️ خطوة إجبارية: يجب أن تضع الـ ID الخاص بمنتج العباية كما هو مكتوب في منصة Starshops
-          offer_id: "32", // استبدل هذه الكلمة برقم العرض الحقيقي
-        }),
-      });
-
-      if (response.ok) {
-        setIsSuccess(true);
-        // تفعيل Facebook Pixel وإخباره أن هناك مبيعة بـ 270 درهم
-        if (typeof (window as any).fbq === 'function') {
-          (window as any).fbq('track', 'Purchase', { currency: "MAD", value: 270.00 });
-        }
-      } else {
-        const errorData = await response.json();
-        console.error("API Error:", errorData);
-        alert("وقع خطأ فني أثناء إرسال الطلب، المرجو التواصل معنا عبر الواتساب لتسجيل طلبيتك.");
+  const handleFormInteraction = () => {
+    if (!hasInitiatedCheckout) {
+      setHasInitiatedCheckout(true);
+      // Facebook Pixel
+      if (typeof (window as any).fbq === 'function') {
+        (window as any).fbq('track', 'InitiateCheckout', { value: 270, currency: 'MAD' });
       }
-    } catch (error) {
-      console.error("Network Error:", error);
-      alert("تأكد من اتصالك بالإنترنت وحاول مرة أخرى.");
-    } finally {
-      setIsLoading(false);
+      // Google Analytics
+      if (typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'begin_checkout', {
+          value: 270,
+          currency: 'MAD',
+          items: [{ item_name: "عباية بيتش بالشال", price: 270 }]
+        });
+      }
     }
   };
 
-  // شاشة النجاح التي تظهر بعد الطلب
-  if (isSuccess) {
+  const sendDataToGoogle = async (isFinalSubmit: boolean = false) => {
+    if ((!formData.name && !formData.phone && !formData.city) || phoneError) return;
+    const data = new FormData();
+    data.append("Date", new Date().toLocaleString());
+    data.append("Color", availableColors.find(c => c.id === selectedColor)?.name || selectedColor);
+    data.append("Name", formData.name);
+    data.append("Phone", formData.phone);
+    data.append("City", formData.city);
+    data.append("OrderId", orderId);
+    
+    // 👇 هذا هو السطر السحري اللي كيعلم جوجل باش يصيفط الإشعار للديسكورد
+    data.append("IsFinal", isFinalSubmit ? "true" : "false");
+
+    try {
+      await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: data, mode: "no-cors" });
+      if (isFinalSubmit) {
+        setStatus("success");
+        // Facebook Pixel 
+        if (typeof (window as any).fbq === 'function') {
+          (window as any).fbq('track', 'Purchase', { currency: "MAD", value: 270.00 });
+        }
+        // Google Analytics 
+        if (typeof (window as any).gtag === 'function') {
+          (window as any).gtag('event', 'purchase', {
+            transaction_id: orderId,
+            value: 270,
+            currency: 'MAD',
+            items: [{ item_name: "عباية بيتش بالشال", item_variant: selectedColor, price: 270 }]
+          });
+        }
+      }
+    } catch (error) {
+      if (isFinalSubmit) setStatus("error");
+    }
+  };
+
+  // نظام تتبع السلة المتروكة (يرسل الداتا بدون إشعار ديسكورد)
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      if (formData.name || formData.phone || formData.city) sendDataToGoogle(false);
+    }, 1500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [formData, selectedColor]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    if (name === "phone") {
+      setPhoneError(!/^[+0-9\s]*$/.test(value) && value !== "");
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (phoneError) return;
+    setStatus("submitting");
+    // إرسال الطلب النهائي (يُفعل إشعار الديسكورد)
+    sendDataToGoogle(true);
+  };
+
+  if (status === "success") {
     return (
-      <section className="py-16 px-5 bg-alabaster" id="order-form">
-        <div className="max-w-md mx-auto text-center bg-white p-8 rounded-2xl border border-green-500 shadow-lg">
-          <div className="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-md">✓</div>
-          <h2 className="font-display text-3xl text-charcoal mb-3">تم تسجيل طلبك بنجاح!</h2>
-          <p className="font-body text-charcoal/70 text-lg">
-            شكراً لكِ. سنتصل بكِ في أقرب وقت من رقمنا لتأكيد الطلب قبل إرسال العباية.
-          </p>
+      <section id="order" className="py-12 px-5 text-center bg-white">
+        <div className="max-w-md mx-auto p-8 rounded-2xl border-2 border-green-500 bg-green-50 shadow-sm">
+          <div className="text-5xl mb-4">✅</div>
+          <h2 className="text-2xl font-bold text-green-800 mb-2">تم تسجيل طلبك بنجاح!</h2>
+          <p className="text-green-700 font-medium">شكراً لثقتك. سنتصل بك قريباً عبر الهاتف لتأكيد العنوان وإرسال العباية.</p>
         </div>
       </section>
     );
   }
 
-  // الاستمارة العادية
   return (
-    <section className="py-16 px-5 bg-alabaster" id="order-form">
-      <div className="max-w-md mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="font-display text-3xl text-charcoal mb-2">اطلبي العباية ديالك دابا</h2>
-          <p className="font-body text-charcoal/70">عمري هاد المعلومات والتوصيل فابور حتال الدار</p>
+    <section id="order" className="py-16 px-5 bg-white relative border-t border-charcoal/5">
+      <div className="max-w-md mx-auto relative z-10">
+        <div className="text-center mb-6">
+          <h2 className="font-display text-2xl text-charcoal mb-2">طلب العباية الآن</h2>
+          <div className="inline-block bg-gold/10 text-gold font-bold px-4 py-2 rounded-full text-sm mb-2">
+            ✨ فصالة فراشة مريحة - تناسب جميع المقاسات (Standard Size)
+          </div>
+          <p className="font-body text-charcoal/70">أدخلي معلوماتك أسفله وسنتصل بك لتأكيد الطلب</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-md border border-charcoal/10 space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="bg-alabaster p-4 rounded-xl shadow-sm border border-charcoal/10">
+            <label className="block text-right text-sm font-bold text-charcoal mb-3">
+              اختاري اللون المناسب ليك: <span className="text-gold">{availableColors.find(c => c.id === selectedColor)?.name}</span>
+            </label>
+            <div className="flex justify-center gap-4 flex-row-reverse">
+              {availableColors.map((color) => (
+                <button
+                  key={color.id}
+                  type="button"
+                  onClick={() => setSelectedColor(color.id)}
+                  className={`w-10 h-10 rounded-full transition-all duration-200 border-2 ${
+                    selectedColor === color.id ? "scale-110 border-gold shadow-md ring-2 ring-gold/20" : "border-transparent opacity-80 hover:scale-105"
+                  }`}
+                  style={{ backgroundColor: color.hex }}
+                />
+              ))}
+            </div>
+          </div>
+
           <div>
-            <label className="block font-body text-sm font-bold text-charcoal mb-2" htmlFor="name">الاسم الكامل</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full bg-alabaster border border-charcoal/20 rounded-xl px-4 py-3 text-right font-body focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
-              placeholder="مثال: فاطمة الزهراء"
+            <label className="block text-right text-sm font-bold text-charcoal mb-1">الاسم الكامل</label>
+            <input 
+              required 
+              name="name" 
+              value={formData.name} 
+              onChange={handleInputChange} 
+              onFocus={handleFormInteraction}
+              type="text" 
+              placeholder="مثال: فاطمة الزهراء" 
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-alabaster shadow-sm" 
             />
           </div>
 
           <div>
-            <label className="block font-body text-sm font-bold text-charcoal mb-2" htmlFor="phone">رقم الهاتف</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              required
-              dir="ltr"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full bg-alabaster border border-charcoal/20 rounded-xl px-4 py-3 text-left font-body focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
-              placeholder="06 XX XX XX XX"
+            <label className="block text-right text-sm font-bold text-charcoal mb-1">رقم الهاتف</label>
+            <input 
+              required 
+              name="phone" 
+              value={formData.phone} 
+              onChange={handleInputChange} 
+              onFocus={handleFormInteraction}
+              type="tel" 
+              inputMode="tel"
+              dir="ltr" 
+              placeholder="06XXXXXXXX" 
+              className={`w-full p-4 rounded-xl border outline-none text-right bg-alabaster shadow-sm ${phoneError ? "border-red-500 focus:border-red-500 text-red-600 ring-1 ring-red-500" : "border-charcoal/10 focus:border-gold"}`} 
             />
+            {phoneError && <p className="text-red-500 text-right text-xs font-bold mt-2">المرجو إدخال أرقام فقط</p>}
           </div>
 
           <div>
-            <label className="block font-body text-sm font-bold text-charcoal mb-2" htmlFor="city">المدينة</label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              required
-              value={formData.city}
-              onChange={handleChange}
-              className="w-full bg-alabaster border border-charcoal/20 rounded-xl px-4 py-3 text-right font-body focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
-              placeholder="مثال: الدار البيضاء"
+            <label className="block text-right text-sm font-bold text-charcoal mb-1">المدينة</label>
+            <input 
+              required 
+              name="city" 
+              value={formData.city} 
+              onChange={handleInputChange} 
+              onFocus={handleFormInteraction}
+              type="text" 
+              placeholder="مثال: الدار البيضاء" 
+              className="w-full p-4 rounded-xl border border-charcoal/10 focus:border-gold outline-none text-right bg-alabaster shadow-sm" 
             />
           </div>
 
-          <div>
-            <label className="block font-body text-sm font-bold text-charcoal mb-2" htmlFor="address">العنوان بالتفصيل</label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              required
-              value={formData.address}
-              onChange={handleChange}
-              className="w-full bg-alabaster border border-charcoal/20 rounded-xl px-4 py-3 text-right font-body focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
-              placeholder="اسم الحي، الشارع، رقم الدار"
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full text-white font-bold font-body text-lg py-4 rounded-xl shadow-lg transition-all ${
-              isLoading ? "bg-charcoal/50 cursor-not-allowed" : "bg-gold hover:bg-gold/90 active:scale-[0.98]"
-            }`}
-          >
-            {isLoading ? "جاري الإرسال..." : "أكدي الطلب دابا - 270 درهم"}
+          <button type="submit" disabled={status === "submitting" || phoneError} className="w-full bg-charcoal text-white font-bold py-5 rounded-xl shadow-lg hover:bg-black transition-colors active:scale-95 mt-2">
+            {status === "submitting" ? "جاري الإرسال..." : "تأكيد الطلب - 270 درهم"}
           </button>
           
-          <p className="text-center text-xs text-charcoal/50 font-body mt-4">
-            🔒 معلوماتك آمنة ولن يتم مشاركتها مع أي جهة خارجية
-          </p>
+          <div className="flex flex-col gap-4 mt-6 bg-green-50/50 p-5 rounded-xl border border-green-100">
+            <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
+              <span className="text-2xl drop-shadow-sm">🇲🇦</span>
+              <span>توصيل مجاني (فابور) لجميع المدن المغربية</span>
+            </div>
+            <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
+              <span className="text-2xl drop-shadow-sm">🚚</span>
+              <span>الدفع عند الاستلام، شوف السلعة عاد خلص</span>
+            </div>
+            <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
+              <span className="text-2xl drop-shadow-sm">🔒</span>
+              <span>معلوماتك في أمان تام ولن يتم مشاركتها</span>
+            </div>
+          </div>
         </form>
       </div>
     </section>
