@@ -17,23 +17,14 @@ const OrderForm = () => {
   const [hasInitiatedCheckout, setHasInitiatedCheckout] = useState(false);
   const [orderId] = useState(() => Date.now().toString(36) + Math.random().toString(36).substring(2));
   
-  // رابط Google Apps Script الخاص بك
+  // 🔴 الرابط الصحيح لجوجل سكريبت الخاص بك
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XbTMaXhRsbXmyzpcnYEcqF6Agm738vW_6E1Cio8JF8jF5tr-oiG67OKb5swMhyLX/exec";
 
   const handleFormInteraction = () => {
     if (!hasInitiatedCheckout) {
       setHasInitiatedCheckout(true);
-      // Facebook Pixel
       if (typeof (window as any).fbq === 'function') {
         (window as any).fbq('track', 'InitiateCheckout', { value: 270, currency: 'MAD' });
-      }
-      // Google Analytics
-      if (typeof (window as any).gtag === 'function') {
-        (window as any).gtag('event', 'begin_checkout', {
-          value: 270,
-          currency: 'MAD',
-          items: [{ item_name: "عباية بيتش بالشال", price: 270 }]
-        });
       }
     }
   };
@@ -47,26 +38,14 @@ const OrderForm = () => {
     data.append("Phone", formData.phone);
     data.append("City", formData.city);
     data.append("OrderId", orderId);
-    
-    // 👇 هذا هو السطر السحري اللي كيعلم جوجل باش يصيفط الإشعار للديسكورد
     data.append("IsFinal", isFinalSubmit ? "true" : "false");
 
     try {
       await fetch(GOOGLE_SCRIPT_URL, { method: "POST", body: data, mode: "no-cors" });
       if (isFinalSubmit) {
         setStatus("success");
-        // Facebook Pixel 
         if (typeof (window as any).fbq === 'function') {
           (window as any).fbq('track', 'Purchase', { currency: "MAD", value: 270.00 });
-        }
-        // Google Analytics 
-        if (typeof (window as any).gtag === 'function') {
-          (window as any).gtag('event', 'purchase', {
-            transaction_id: orderId,
-            value: 270,
-            currency: 'MAD',
-            items: [{ item_name: "عباية بيتش بالشال", item_variant: selectedColor, price: 270 }]
-          });
         }
       }
     } catch (error) {
@@ -74,7 +53,6 @@ const OrderForm = () => {
     }
   };
 
-  // نظام تتبع السلة المتروكة (يرسل الداتا بدون إشعار ديسكورد)
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (formData.name || formData.phone || formData.city) sendDataToGoogle(false);
@@ -94,7 +72,6 @@ const OrderForm = () => {
     e.preventDefault();
     if (phoneError) return;
     setStatus("submitting");
-    // إرسال الطلب النهائي (يُفعل إشعار الديسكورد)
     sendDataToGoogle(true);
   };
 
@@ -104,7 +81,7 @@ const OrderForm = () => {
         <div className="max-w-md mx-auto p-8 rounded-2xl border-2 border-green-500 bg-green-50 shadow-sm">
           <div className="text-5xl mb-4">✅</div>
           <h2 className="text-2xl font-bold text-green-800 mb-2">تم تسجيل طلبك بنجاح!</h2>
-          <p className="text-green-700 font-medium">شكراً لثقتك. سنتصل بك قريباً عبر الهاتف لتأكيد العنوان وإرسال العباية.</p>
+          <p className="text-green-700 font-medium text-lg">شكراً لثقتك. سنتصل بك فوراً لتأكيد العنوان وإرسال العباية لتصلك قبل العيد إن شاء الله.</p>
         </div>
       </section>
     );
@@ -113,11 +90,15 @@ const OrderForm = () => {
   return (
     <section id="order" className="py-16 px-5 bg-white relative border-t border-charcoal/5">
       <div className="max-w-md mx-auto relative z-10">
+        
+        {/* رسالة استعجال العيد الجديدة */}
+        <div className="bg-red-50 border-2 border-red-200 text-red-700 font-bold px-4 py-3 rounded-xl text-sm mb-6 flex items-center justify-center gap-2 shadow-sm">
+          <span className="text-xl">⏳</span>
+          <span>الكمية محدودة! اطلبي دابا نضمنو ليك التوصيل قبل العيد</span>
+        </div>
+
         <div className="text-center mb-6">
           <h2 className="font-display text-2xl text-charcoal mb-2">طلب العباية الآن</h2>
-          <div className="inline-block bg-gold/10 text-gold font-bold px-4 py-2 rounded-full text-sm mb-2">
-            ✨ فصالة فراشة مريحة - تناسب جميع المقاسات (Standard Size)
-          </div>
           <p className="font-body text-charcoal/70">أدخلي معلوماتك أسفله وسنتصل بك لتأكيد الطلب</p>
         </div>
 
@@ -186,8 +167,8 @@ const OrderForm = () => {
             />
           </div>
 
-          <button type="submit" disabled={status === "submitting" || phoneError} className="w-full bg-charcoal text-white font-bold py-5 rounded-xl shadow-lg hover:bg-black transition-colors active:scale-95 mt-2">
-            {status === "submitting" ? "جاري الإرسال..." : "تأكيد الطلب - 270 درهم"}
+          <button type="submit" disabled={status === "submitting" || phoneError} className="w-full bg-red-600 text-white font-bold py-5 rounded-xl shadow-lg hover:bg-red-700 transition-colors active:scale-95 mt-2 text-lg">
+            {status === "submitting" ? "جاري الإرسال..." : "أكدي الطلب دابا - ليوصلك قبل العيد"}
           </button>
           
           <div className="flex flex-col gap-4 mt-6 bg-green-50/50 p-5 rounded-xl border border-green-100">
@@ -198,10 +179,6 @@ const OrderForm = () => {
             <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
               <span className="text-2xl drop-shadow-sm">🚚</span>
               <span>الدفع عند الاستلام، شوف السلعة عاد خلص</span>
-            </div>
-            <div className="flex items-center gap-3 justify-start text-sm font-bold text-charcoal/90">
-              <span className="text-2xl drop-shadow-sm">🔒</span>
-              <span>معلوماتك في أمان تام ولن يتم مشاركتها</span>
             </div>
           </div>
         </form>
