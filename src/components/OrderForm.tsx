@@ -17,7 +17,7 @@ const OrderForm = () => {
   const [hasInitiatedCheckout, setHasInitiatedCheckout] = useState(false);
   const [orderId] = useState(() => Date.now().toString(36) + Math.random().toString(36).substring(2));
   
-  // 🔴 الرابط الصحيح لجوجل سكريبت الخاص بك
+  // الرابط الصحيح لجوجل سكريبت الخاص بك
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby7XbTMaXhRsbXmyzpcnYEcqF6Agm738vW_6E1Cio8JF8jF5tr-oiG67OKb5swMhyLX/exec";
 
   const handleFormInteraction = () => {
@@ -91,7 +91,7 @@ const OrderForm = () => {
     <section id="order" className="py-16 px-5 bg-white relative border-t border-charcoal/5">
       <div className="max-w-md mx-auto relative z-10">
         
-        {/* رسالة استعجال العيد الجديدة */}
+        {/* شريط استعجال العيد */}
         <div className="bg-red-50 border-2 border-red-200 text-red-700 font-bold px-4 py-3 rounded-xl text-sm mb-6 flex items-center justify-center gap-2 shadow-sm">
           <span className="text-xl">⏳</span>
           <span>الكمية محدودة! اطلبي دابا نضمنو ليك التوصيل قبل العيد</span>
@@ -99,6 +99,14 @@ const OrderForm = () => {
 
         <div className="text-center mb-6">
           <h2 className="font-display text-2xl text-charcoal mb-2">طلب العباية الآن</h2>
+          
+          {/* 💰 قسم السعر المطور (Psychological Pricing) 💰 */}
+          <div className="flex justify-center items-center gap-3 mb-2 bg-alabaster py-2 rounded-lg border border-charcoal/5">
+            <span className="text-3xl font-bold text-red-600">270 درهم</span>
+            <span className="text-lg text-charcoal/40 line-through decoration-red-500/50">450 درهم</span>
+            <span className="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-md">-40%</span>
+          </div>
+          
           <p className="font-body text-charcoal/70">أدخلي معلوماتك أسفله وسنتصل بك لتأكيد الطلب</p>
         </div>
 
@@ -167,8 +175,16 @@ const OrderForm = () => {
             />
           </div>
 
-          <button type="submit" disabled={status === "submitting" || phoneError} className="w-full bg-red-600 text-white font-bold py-5 rounded-xl shadow-lg hover:bg-red-700 transition-colors active:scale-95 mt-2 text-lg">
-            {status === "submitting" ? "جاري الإرسال..." : "أكدي الطلب دابا - ليوصلك قبل العيد"}
+          {/* 💰 الزر يتضمن السعر والعيد معاً 💰 */}
+          <button type="submit" disabled={status === "submitting" || phoneError} className="w-full bg-red-600 text-white py-4 rounded-xl shadow-lg hover:bg-red-700 transition-colors active:scale-95 mt-2 flex flex-col items-center justify-center gap-1">
+            <span className="font-bold text-lg">
+              {status === "submitting" ? "جاري الإرسال..." : "أكدي الطلب دابا ليوصلك قبل العيد"}
+            </span>
+            {status !== "submitting" && (
+              <span className="text-sm bg-black/20 px-3 py-1 rounded-full font-medium">
+                بـ 270 درهم فقط
+              </span>
+            )}
           </button>
           
           <div className="flex flex-col gap-4 mt-6 bg-green-50/50 p-5 rounded-xl border border-green-100">
