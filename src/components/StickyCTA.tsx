@@ -30,7 +30,17 @@ const StickyCTA = () => {
     e.preventDefault();
     const element = document.getElementById("order");
     if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
+      // 1. نحسب المسافة من أعلى الصفحة إلى بداية قسم الاستمارة
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      
+      // 2. نضيف إزاحة (+60 بيكسل) لكي نتجاوز المساحة البيضاء العلوية
+      // يمكنك زيادة أو تنقيص هذا الرقم (مثلاً 40 أو 80) حتى يتطابق تماماً مع النص الأحمر في هاتفك
+      const offsetPosition = elementPosition + 60; 
+      
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
     }
   };
 

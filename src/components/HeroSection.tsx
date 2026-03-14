@@ -31,9 +31,17 @@ const HeroSection = () => {
         </p>
 
         {/* التعديل 3: بطاقة السعر أصبحت بخلفية زجاجية داكنة (bg-black/40) لتبرز الأرقام البيضاء */}
+        {/* Price tag with Anchoring Effect (السعر القديم والجديد) */}
         <div className="inline-flex items-center gap-3 bg-black/40 backdrop-blur-md rounded-lg px-5 py-3 border border-white/10 mb-5 shadow-2xl">
-          <span className="font-body text-sm text-gold font-bold drop-shadow-md">عرض خاص للعيد</span>
-          <span className="font-body text-3xl font-extrabold text-white drop-shadow-lg">270</span>
+          <span className="font-body text-sm text-gold font-bold drop-shadow-md">عرض العيد</span>
+          
+          <div className="flex items-baseline gap-2">
+            {/* السعر الجديد البارز */}
+            <span className="font-body text-3xl font-extrabold text-white drop-shadow-lg">270</span>
+            {/* السعر القديم المشطوب بخط صغير وشفافية */}
+            <span className="font-body text-lg font-medium text-white/50 line-through decoration-red-500">450</span>
+          </div>
+          
           <span className="font-body text-lg text-white/90">درهم</span>
         </div>
 
