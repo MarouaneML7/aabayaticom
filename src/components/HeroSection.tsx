@@ -1,4 +1,4 @@
-import heroImage from "@/assets/abaya-emerald.jpg";
+import heroImage from "@/assets/abaya-emerald.webp";
 
 const HeroSection = () => {
   return (

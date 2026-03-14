@@ -1,8 +1,8 @@
-import emeraldImg from "@/assets/abaya-emerald.jpg";
-import burgundyImg from "@/assets/abaya-burgundy.jpg";
-import blackImg from "@/assets/abaya-black.jpg";
-import navyImg from "@/assets/abaya-navy.jpg";
-import fuchsiaImg from "@/assets/abaya-fuchsia.jpg";
+import emeraldImg from "@/assets/abaya-emerald.webp";
+import burgundyImg from "@/assets/abaya-burgundy.webp";
+import blackImg from "@/assets/abaya-black.webp";
+import navyImg from "@/assets/abaya-navy.webp";
+import fuchsiaImg from "@/assets/abaya-fuchsia.webp";
 
 const galleryColors = [
   { id: "emerald", name: "أخضر زمردي", img: emeraldImg },
