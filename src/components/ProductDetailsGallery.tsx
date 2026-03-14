@@ -38,6 +38,10 @@ const ProductDetailsGallery = () => {
         <p className="font-body text-charcoal/70">
           دوزي الصور بصباعك باش تشوفي تفاصيل الخياطة والثوب ✨
         </p>
+        {/* التلميح البصري الجديد لمنع النقرات المتكررة */}
+        <p className="inline-block mt-3 bg-red-50 text-red-600 px-4 py-1.5 rounded-full text-sm font-bold border border-red-100">
+          🔍 الصور واضحة بدون الحاجة للتكبير (Zoom)
+        </p>
       </div>
 
       {/* Swipeable Mobile Gallery */}
@@ -54,7 +58,6 @@ const ProductDetailsGallery = () => {
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
                 loading="lazy"
               />
-              {/* تدرج لوني خفيف أسفل الصورة لإبراز النص إذا أردت */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
             </div>
             <h3 className="font-bold text-lg text-charcoal mb-1">{item.title}</h3>
@@ -65,7 +68,6 @@ const ProductDetailsGallery = () => {
         ))}
       </div>
       
-      {/* ستايل إخفاء شريط التمرير (Scrollbar) لجمالية أفضل */}
       <style>{`
         .hide-scrollbar::-webkit-scrollbar {
           display: none;

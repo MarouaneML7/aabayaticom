@@ -27,7 +27,7 @@ const Testimonials = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {reviews.map((review, index) => (
-            <div key={index} className="bg-alabaster p-6 rounded-2xl shadow-sm border border-charcoal/5">
+            <div key={index} className="bg-alabaster p-6 rounded-2xl shadow-sm border border-charcoal/5 flex flex-col h-full">
               <div className="flex gap-1 mb-3 justify-end">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} className="w-5 h-5 text-gold" fill="currentColor" viewBox="0 0 20 20">
@@ -35,12 +35,19 @@ const Testimonials = () => {
                   </svg>
                 ))}
               </div>
-              <p className="font-body text-charcoal/80 text-right mb-4 font-medium leading-relaxed">
+              <p className="font-body text-charcoal/80 text-right mb-6 font-medium leading-relaxed flex-grow">
                 "{review.text}"
               </p>
-              <div className="text-right">
-                <p className="font-bold text-charcoal">{review.name}</p>
-                <p className="text-sm text-charcoal/50">{review.city}</p>
+              
+              {/* قسم الاسم مع الأفاتار */}
+              <div className="flex items-center justify-end gap-3 mt-auto pt-4 border-t border-charcoal/5">
+                <div className="text-right">
+                  <p className="font-bold text-charcoal">{review.name}</p>
+                  <p className="text-sm text-charcoal/50">{review.city}</p>
+                </div>
+                <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center text-gold font-bold text-xl border border-gold/20 shadow-sm shrink-0">
+                  {review.name.charAt(0)}
+                </div>
               </div>
             </div>
           ))}

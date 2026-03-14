@@ -55,6 +55,9 @@
   }
   html {
     direction: rtl;
+    /* التعديل هنا: قفزة ناعمة ومسافة أمان علوية */
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
   }
   body {
     @apply bg-background text-foreground;
