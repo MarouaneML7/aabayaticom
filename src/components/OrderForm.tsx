@@ -45,7 +45,7 @@ const OrderForm = () => {
       if (isFinalSubmit) {
         setStatus("success");
         if (typeof (window as any).fbq === 'function') {
-          (window as any).fbq('track', 'Purchase', { currency: "MAD", value: 270.00 });
+          (window as any).fbq('track', 'Lead', { currency: "MAD", value: 270.00 });
         }
       }
     } catch (error) {
