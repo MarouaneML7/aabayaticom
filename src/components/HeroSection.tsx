@@ -19,10 +19,11 @@ const HeroSection = () => {
       <div className="relative mt-auto px-5 pb-28 pt-16 text-right w-full max-w-md mx-auto z-10">
         
         {/* التعديل 2: إضافة drop-shadow-xl للنصوص لكي تبرز وتنفصل عن الصورة */}
-        <h1 className="font-display text-3xl md:text-4xl leading-snug text-white mb-3 drop-shadow-xl">
+        {/* جعلنا العنوان الرئيسي font-bold والذهبي font-extrabold */}
+        <h1 className="font-display font-bold text-3xl md:text-4xl leading-snug text-white mb-3 drop-shadow-xl">
           الأناقة الكاملة لعيد 2026
           <br />
-          <span className="text-gold drop-shadow-lg">عباية "بيتش" الفاخرة بالشال ديالها</span> ✨
+          <span className="text-gold font-extrabold drop-shadow-lg">عباية "بيتش" الفاخرة بالشال ديالها</span> ✨
         </h1>
 
         <p className="font-body text-base font-medium text-white/95 mb-5 leading-relaxed drop-shadow-lg">

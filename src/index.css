@@ -69,7 +69,9 @@
 @layer utilities {
   .font-display {
     font-family: var(--font-display);
+    @apply font-bold; /* هذا السطر السحري سيجعل كل العناوين في الموقع غليظة */
   }
+  /* اترك باقي الأكواد كما هي... */
   .font-body {
     font-family: var(--font-body);
   }
