@@ -39,7 +39,7 @@ const FAQ = () => {
             إلا مالقيتيش الجواب للسؤال ديالك، تواصلي معانا في الواتساب وغنجاوبوك فوراً 💬
           </p>
           <a
-            href="https://wa.me/212772967342"
+            href="https://wa.me/212669711070"
             target="_blank"
             rel="noopener noreferrer"
             onClick={handleWhatsAppClick}

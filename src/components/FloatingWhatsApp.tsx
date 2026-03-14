@@ -8,7 +8,7 @@ const FloatingWhatsApp = () => {
 
   return (
     <a
-      href="https://wa.me/212772967342" // ضع رقمك هنا
+      href="https://wa.me/212669711070" // ضع رقمك هنا
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleWhatsAppClick}
