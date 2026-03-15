@@ -94,7 +94,7 @@ const OrderForm = () => {
         {/* شريط استعجال العيد */}
         <div className="bg-red-50 border-2 border-red-200 text-red-700 font-bold px-4 py-3 rounded-xl text-sm mb-6 flex items-center justify-center gap-2 shadow-sm">
           <span className="text-xl">⏳</span>
-          <span>الكمية محدودة! اطلبي دابا نضمنو ليك التوصيل قبل العيد</span>
+          <span>الكمية محدودة! طلبي دابا، والتوصيل مضمون 100% قبل نهار العيد!</span>
         </div>
 
         <div className="text-center mb-6">

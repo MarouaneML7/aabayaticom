@@ -56,7 +56,7 @@ const StickyCTA = () => {
         onClick={scrollToOrder}
         className="pointer-events-auto block w-full max-w-md mx-auto bg-primary text-primary-foreground font-body font-bold text-lg text-center py-4 rounded-xl shadow-lg hover:opacity-95 transition-opacity active:scale-[0.98]"
       >
-        اطلبي الآن - الدفع عند الاستلام
+        اطلبي دابا وتوصلي بيها قبل العيد
       </a>
     </div>
   );
